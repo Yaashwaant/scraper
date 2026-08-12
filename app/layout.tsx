@@ -8,8 +8,8 @@ import "./globals.css";
 // at build time and hangs the dev server / build when those hosts are unreachable.
 
 export const metadata: Metadata = {
-  title: "Lead → Launch",
-  description: "Scrape → Audit → Rank → Build → Outreach. One Claude skill.",
+  title: "WebBrixs Lead Scraper",
+  description: "WebBrixs Lead Scraper — Scrape → Audit → Rank → Build → Outreach",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

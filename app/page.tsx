@@ -51,11 +51,9 @@ export default function Page() {
       <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary-foreground" strokeWidth={1.5} aria-hidden="true" />
-            </div>
+            <img src="/logo.png" alt="WebBrixs Logo" className="h-10 w-10 object-contain rounded-md" />
             <div>
-              <div className="font-display text-xl leading-none">Lead <span className="text-muted-foreground">→</span> Launch</div>
+              <div className="font-display text-xl leading-none">WebBrixs <span className="text-muted-foreground">Lead Scraper</span></div>
               <div className="text-[11px] text-muted-foreground leading-tight tracking-wide uppercase mt-1">Scrape · Audit · Rank · Build · Outreach</div>
             </div>
           </div>
