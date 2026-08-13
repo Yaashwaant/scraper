@@ -80,7 +80,7 @@ export function Phase1Scrape({
             <div className="space-y-2">
               <Label htmlFor="count" className="text-xs uppercase tracking-[0.12em] text-muted-foreground">Count</Label>
               <Input id="count" type="number" inputMode="numeric" min={1} max={50} value={input.count} onChange={(e) => setInput({ ...input, count: Number(e.target.value) })} className="h-10 text-base font-mono tabular-nums" />
-              <p className="text-[11px] text-muted-foreground">Max 25 for free Apify tier.</p>
+              <p className="text-[11px] text-muted-foreground">Max 40 for free tier 5X more at just 7 USD per month.</p>
             </div>
             <Button onClick={runScrape} disabled={loading} className="w-full h-11 transition-transform duration-150 active:scale-[0.98]">
               {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Scraping...</> : "Scrape leads"}
