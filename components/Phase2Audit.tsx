@@ -69,11 +69,11 @@ export function Phase2Audit({
     if (!res.ok) {
       if (res.notInstalled) setNotInstalled(true);
       else setClaudeError(res.error);
-      toast.error(res.notInstalled ? "Claude Code required" : "Audit failed");
+      toast.error(res.notInstalled ? "AI configuration required" : "Audit failed");
       return;
     }
     setAudits({ ...audits, ...res.data.audits });
-    toast.success(`Claude audited ${targets.length} lead${targets.length === 1 ? "" : "s"}`);
+    toast.success(`AI audited ${targets.length} lead${targets.length === 1 ? "" : "s"}`);
   }
 
   const auditedCount = Object.keys(audits).length;
@@ -166,15 +166,15 @@ export function Phase2Audit({
             className="h-10 px-4"
           >
             {running
-              ? "Claude is auditing…"
-              : `Run audit${selectedIds.size === leads.length ? " on all leads" : ` on ${selectedIds.size} selected`} with Claude`}
+              ? "AI is auditing…"
+              : `Run audit${selectedIds.size === leads.length ? " on all leads" : ` on ${selectedIds.size} selected`} with AI`}
           </Button>
         </div>
       </div>
 
       {running && (
         <div className="mb-6">
-          <ClaudeThinking label={`Claude is auditing ${selectedIds.size} lead${selectedIds.size === 1 ? "" : "s"}…`} />
+          <ClaudeThinking label={`AI is auditing ${selectedIds.size} lead${selectedIds.size === 1 ? "" : "s"}…`} />
         </div>
       )}
       {notInstalled && (

@@ -70,13 +70,13 @@ export function Phase4Build({
     if (!res.ok) {
       if (res.notInstalled) setNotInstalled(true);
       else setClaudeError(res.error);
-      toast.error(res.notInstalled ? "Claude Code required" : "Generation failed");
+      toast.error(res.notInstalled ? "AI configuration required" : "Generation failed");
       return;
     }
     lastFor.current = `${selected.id}:${platform}`;
     setPrompt(res.data.prompt);
     setPitchPoints(res.data.pitchPoints ?? []);
-    toast.success("Claude generated your website prompt");
+    toast.success("AI generated your website prompt");
   }
 
   function copyPrompt() {
@@ -93,7 +93,7 @@ export function Phase4Build({
     return (
       <PhaseShell
         title="Phase 4 — Generate website"
-        subtitle="Claude Code writes a complete, tailored website-builder prompt for the lead you picked — brand, sections, SEO, and CTAs baked in."
+        subtitle="AI writes a complete, tailored website-builder prompt for the lead you picked — brand, sections, SEO, and CTAs baked in."
         onPrev={onPrev}
         onNext={onNext}
         nextDisabled
@@ -101,7 +101,7 @@ export function Phase4Build({
       >
         <IncompleteState
           title="No lead selected yet"
-          description="Run scrape, audit, and rank, then pick a prospect in Phase 3. Claude then writes a full website prompt (for Lovable / Bolt / Claude Code / Codex) here."
+          description="Run scrape, audit, and rank, then pick a prospect in Phase 3. AI then writes a full website prompt (for Lovable / Bolt / Claude Code / Codex) here."
           prevPhaseLabel="Rank"
           onPrev={onPrev}
         />
@@ -112,7 +112,7 @@ export function Phase4Build({
   return (
     <PhaseShell
       title="Phase 4 — Generate website"
-      subtitle="Claude Code writes a complete, tailored website-builder prompt for your selected lead."
+      subtitle="AI writes a complete, tailored website-builder prompt for your selected lead."
       onPrev={onPrev}
       onNext={onNext}
       nextLabel="Draft outreach"
@@ -133,7 +133,7 @@ export function Phase4Build({
             </SelectContent>
           </Select>
           <Button onClick={generate} disabled={generating} className="h-10 px-4">
-            {generating ? "Generating…" : prompt ? "Regenerate" : "Generate with Claude"}
+            {generating ? "Generating…" : prompt ? "Regenerate" : "Generate with AI"}
           </Button>
         </div>
       </div>
@@ -148,7 +148,7 @@ export function Phase4Build({
       <div className="grid lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Claude-generated prompt</CardTitle>
+            <CardTitle>AI-generated prompt</CardTitle>
             {prompt && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={openPlatform}><ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open {PLATFORMS.find((p) => p.id === platform)?.label}</Button>
@@ -158,7 +158,7 @@ export function Phase4Build({
           </CardHeader>
           <CardContent>
             {generating ? (
-              <ClaudeThinking label="Claude is writing the website prompt…" />
+              <ClaudeThinking label="AI is writing the website prompt…" />
             ) : prompt ? (
               <pre className="text-xs leading-relaxed whitespace-pre-wrap font-mono bg-muted/30 rounded-md p-4 max-h-[520px] overflow-y-auto border border-border">
                 {typed}
@@ -167,7 +167,7 @@ export function Phase4Build({
             ) : (
               <div className="h-[300px] flex flex-col items-center justify-center text-center gap-3 text-muted-foreground">
                 <Sparkles className="h-6 w-6" strokeWidth={1.5} />
-                <div className="text-sm max-w-xs">Pick a platform and hit <span className="text-foreground font-medium">Generate with Claude</span> — you&apos;ll get a full, tailored builder prompt.</div>
+                <div className="text-sm max-w-xs">Pick a platform and hit <span className="text-foreground font-medium">Generate with AI</span> — you&apos;ll get a full, tailored builder prompt.</div>
               </div>
             )}
           </CardContent>

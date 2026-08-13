@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, TriangleAlert, ExternalLink } from "lucide-react";
 
-/** Branded "Claude is working" loading block. */
+/** Branded "AI is working" loading block. */
 export function ClaudeThinking({ label }: { label: string }) {
   return (
     <Card className="border-dashed">
@@ -23,7 +23,7 @@ export function ClaudeThinking({ label }: { label: string }) {
         <div>
           <div className="font-display text-xl">{label}</div>
           <div className="text-sm text-muted-foreground mt-1">
-            Running on your local Claude Code — this takes 20–60 seconds.
+            Processing with AI — this takes 20–60 seconds.
           </div>
         </div>
         <div className="flex gap-1.5 mt-1">

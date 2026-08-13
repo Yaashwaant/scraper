@@ -55,14 +55,14 @@ export function Phase5Outreach({
     if (!res.ok) {
       if (res.notInstalled) setNotInstalled(true);
       else setClaudeError(res.error);
-      toast.error(res.notInstalled ? "Claude Code required" : "Draft failed");
+      toast.error(res.notInstalled ? "AI configuration required" : "Draft failed");
       return;
     }
     lastFor.current = `${selected.id}:${channel}:${lang}`;
-    setMessage(res.data.first);
-    setFollowUp(res.data.followUp);
+    setMessage(res.data.first ?? "");
+    setFollowUp(res.data.followUp ?? "");
     setBestSendTime(res.data.bestSendTime);
-    toast.success("Claude drafted your outreach");
+    toast.success("AI drafted your outreach");
   }
 
   function copy(text: string) {
@@ -70,13 +70,12 @@ export function Phase5Outreach({
     toast.success("Copied to clipboard");
   }
 
-  function openChannel() {
+  function handleSend() {
     if (!selected) return;
     if (channel === "whatsapp" && selected.whatsapp) {
-      const num = selected.whatsapp.replace(/\D/g, "");
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, "_blank");
+      window.open(`https://wa.me/${selected.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank");
     } else if (channel === "email" && selected.email) {
-      const subject = lang === "hinglish" ? "Aapke business ke liye ek website demo banayi hai" : "Built a website demo for your business";
+      const subject = `Question about ${selected.name}'s website`;
       window.open(`mailto:${selected.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`, "_blank");
     } else if (channel === "instagram") {
       window.open(`https://instagram.com/`, "_blank");
@@ -89,12 +88,12 @@ export function Phase5Outreach({
     return (
       <PhaseShell
         title="Phase 5 — Outreach"
-        subtitle="Claude Code writes a personalized first message + day-3 follow-up, tailored to the lead. Hinglish or English."
+        subtitle="AI writes a personalized first message + day-3 follow-up, tailored to the lead. Hinglish or English."
         onPrev={onPrev}
       >
         <IncompleteState
           title="No lead selected yet"
-          description="Outreach is written per-lead by Claude — using the name, biggest gap, and reachable channels. Run the earlier phases and pick a prospect to draft WhatsApp, email, or Instagram messages here."
+          description="Outreach is written per-lead by AI — using the name, biggest gap, and reachable channels. Run the earlier phases and pick a prospect to draft WhatsApp, email, or Instagram messages here."
           prevPhaseLabel="Rank"
           onPrev={onPrev}
         />
@@ -111,7 +110,7 @@ export function Phase5Outreach({
   const hasDrafts = !!message || !!followUp;
 
   return (
-    <PhaseShell title="Phase 5 — Outreach" subtitle="Claude Code writes a personalized first touch + day-3 follow-up. Hinglish converts better in India." onPrev={onPrev}>
+    <PhaseShell title="Phase 5 — Outreach" subtitle="AI writes a personalized first touch + day-3 follow-up. Hinglish converts better in India." onPrev={onPrev}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Sending to</div>
@@ -140,11 +139,11 @@ export function Phase5Outreach({
           ))}
         </div>
         <Button onClick={generate} disabled={generating} className="h-10 px-4">
-          {generating ? "Claude is writing…" : hasDrafts ? "Regenerate" : "Draft with Claude"}
+          {generating ? "AI is writing…" : hasDrafts ? "Regenerate" : "Draft with AI"}
         </Button>
       </div>
 
-      {generating && <div className="mb-6"><ClaudeThinking label="Claude is writing your outreach…" /></div>}
+      {generating && <div className="mb-6"><ClaudeThinking label="AI is writing your outreach…" /></div>}
       {notInstalled && <div className="mb-6"><ClaudeRequired error={claudeError ?? undefined} onRetry={generate} /></div>}
       {claudeError && !notInstalled && (
         <div className="mb-6 rounded-md border border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/5 p-3 text-sm text-[color:var(--destructive)]" role="alert">
@@ -158,8 +157,8 @@ export function Phase5Outreach({
             <div className="h-12 w-12 rounded-full bg-primary/10 mx-auto flex items-center justify-center mb-4">
               <Sparkles className="h-5 w-5 text-primary" strokeWidth={1.5} />
             </div>
-            <div className="font-display text-xl mb-1">Pick a channel + language</div>
-            <p className="text-sm text-muted-foreground">Then hit &ldquo;Draft with Claude&rdquo; — you&apos;ll get a first message and a day-3 follow-up.</p>
+            <div className="font-display text-xl mb-1">Ready to draft</div>
+            <p className="text-sm text-muted-foreground">Hit &ldquo;Draft with AI&rdquo; to generate a personalized first message and follow-up.</p>
           </CardContent>
         </Card>
       )}
@@ -172,7 +171,7 @@ export function Phase5Outreach({
                 <CardTitle>First message</CardTitle>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => copy(message)}><Copy className="h-3.5 w-3.5 mr-1.5" /> Copy</Button>
-                  <Button size="sm" onClick={openChannel}><ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Send</Button>
+                  <Button size="sm" onClick={handleSend}><ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Send</Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -203,7 +202,7 @@ export function Phase5Outreach({
                 <div className="h-9 w-9 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-base">✓</div>
                 <div>
                   <div className="font-medium tracking-tight">Pipeline complete</div>
-                  <div className="text-sm text-muted-foreground">Lead → audit → ranked → site → outreach, all powered by Claude Code. Repeat for the next prospect in Phase 3.</div>
+                  <div className="text-sm text-muted-foreground">Lead → audit → ranked → site → outreach, all powered by AI. Repeat for the next prospect in Phase 3.</div>
                 </div>
               </div>
             </CardContent>

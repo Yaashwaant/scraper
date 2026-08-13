@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
 import { ClaudeThinking, ClaudeRequired } from "./ClaudeStates";
-import { Crown, IndianRupee, MessageCircle, Phone, Mail, Sparkles } from "lucide-react";
+import { Crown, IndianRupee, MessageCircle, Phone, Mail, Sparkles, Download } from "lucide-react";
 import type { Lead, AuditResult, RankedLead } from "@/lib/types";
 import { callClaude } from "@/lib/claudeClient";
 import { toast } from "sonner";
@@ -39,6 +39,77 @@ export function Phase3Rank({
 
   const auditedCount = leads.filter((l) => audits[l.id]).length;
 
+  function exportCSV() {
+    if (ranked.length === 0) return;
+
+    const headers = [
+      "Rank",
+      "Name",
+      "Score",
+      "Score Reasoning",
+      "Category",
+      "Address",
+      "City",
+      "Phone",
+      "WhatsApp",
+      "Email",
+      "Website",
+      "Rating",
+      "Reviews Count",
+      "Est Lost Revenue/mo (INR)",
+      "Has Website",
+      "PageSpeed Score",
+      "Mobile Friendly",
+      "HTTPS",
+      "Load Time (ms)",
+      "Biggest Gap",
+      "All Gaps"
+    ];
+
+    const rows = ranked.map((lead, index) => [
+      index + 1,
+      lead.name ?? "",
+      lead.score ?? "",
+      lead.scoreReasoning ?? "",
+      lead.category ?? "",
+      lead.address ?? "",
+      lead.city ?? "",
+      lead.phone ?? "",
+      lead.whatsapp ?? "",
+      lead.email ?? "",
+      lead.website ?? "",
+      lead.rating ?? "",
+      lead.reviewsCount ?? "",
+      lead.audit?.estLostRevenuePerMonth ?? "",
+      lead.audit?.hasWebsite ? "Yes" : "No",
+      lead.audit?.pageSpeedScore ?? "",
+      lead.audit?.mobileFriendly ? "Yes" : "No",
+      lead.audit?.https ? "Yes" : "No",
+      lead.audit?.loadTimeMs ?? "",
+      lead.audit?.biggestGap ?? "",
+      lead.audit?.gaps ? lead.audit.gaps.join("; ") : ""
+    ]);
+
+    const csvContent = [
+      headers.map((h) => `"${h.replace(/"/g, '""')}"`).join(","),
+      ...rows.map((row) =>
+        row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `ranked_leads_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success("CSV downloaded successfully");
+  }
+
   async function runRank() {
     setRunning(true);
     setNotInstalled(false);
@@ -48,11 +119,11 @@ export function Phase3Rank({
     if (!res.ok) {
       if (res.notInstalled) setNotInstalled(true);
       else setClaudeError(res.error);
-      toast.error(res.notInstalled ? "Claude Code required" : "Ranking failed");
+      toast.error(res.notInstalled ? "AI configuration required" : "Ranking failed");
       return;
     }
     setRanked(res.data.ranked);
-    toast.success("Claude ranked your prospects");
+    toast.success("AI ranked your prospects");
   }
 
   // No audits yet → nothing to rank
@@ -60,7 +131,7 @@ export function Phase3Rank({
     return (
       <PhaseShell
         title="Phase 3 — Ranked prospects"
-        subtitle="Claude Code scores each lead on conversion potential — site quality, review volume, reachability, and category fit — then ranks them."
+        subtitle="AI scores each lead on conversion potential — site quality, review volume, reachability, and category fit — then ranks them."
         onPrev={onPrev}
         onNext={onNext}
         nextDisabled
@@ -70,8 +141,8 @@ export function Phase3Rank({
           title={leads.length === 0 ? "No leads scraped yet" : "No audits yet"}
           description={
             leads.length === 0
-              ? "Run Phases 1 and 2 first. Once leads are scraped and audited, Claude ranks them by conversion potential here."
-              : "Run an audit in Phase 2 first. Then Claude ranks the audited leads by how likely they are to convert and how much a website would help them."
+              ? "Run Phases 1 and 2 first. Once leads are scraped and audited, AI ranks them by conversion potential here."
+              : "Run an audit in Phase 2 first. Then AI ranks the audited leads by how likely they are to convert and how much a website would help them."
           }
           prevPhaseLabel={leads.length === 0 ? "Scrape" : "Audit"}
           onPrev={onPrev}
@@ -83,7 +154,7 @@ export function Phase3Rank({
   return (
     <PhaseShell
       title="Phase 3 — Ranked prospects"
-      subtitle="Claude Code scores each lead on conversion potential and explains why. Pick one to build for."
+      subtitle="AI scores each lead on conversion potential and explains why. Pick one to build for."
       onPrev={onPrev}
       onNext={onNext}
       nextDisabled={!selectedId}
@@ -92,15 +163,23 @@ export function Phase3Rank({
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div className="text-sm text-muted-foreground">
           {ranked.length > 0
-            ? `${ranked.length} prospects ranked by Claude`
+            ? `${ranked.length} prospects ranked by AI`
             : `${auditedCount} audited lead${auditedCount === 1 ? "" : "s"} ready to rank`}
         </div>
-        <Button onClick={runRank} disabled={running} className="h-10 px-4">
-          {running ? "Claude is ranking…" : ranked.length > 0 ? "Re-rank with Claude" : "Rank prospects with Claude"}
-        </Button>
+        <div className="flex items-center gap-2">
+          {ranked.length > 0 && (
+            <Button onClick={exportCSV} variant="outline" className="h-10 px-4 flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              Download CSV
+            </Button>
+          )}
+          <Button onClick={runRank} disabled={running} className="h-10 px-4">
+            {running ? "AI is ranking…" : ranked.length > 0 ? "Re-rank with AI" : "Rank prospects with AI"}
+          </Button>
+        </div>
       </div>
 
-      {running && <div className="mb-6"><ClaudeThinking label="Claude is ranking your prospects…" /></div>}
+      {running && <div className="mb-6"><ClaudeThinking label="AI is ranking your prospects…" /></div>}
       {notInstalled && <div className="mb-6"><ClaudeRequired error={claudeError ?? undefined} onRetry={runRank} /></div>}
       {claudeError && !notInstalled && (
         <div className="mb-6 rounded-md border border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/5 p-3 text-sm text-[color:var(--destructive)]" role="alert">
@@ -115,7 +194,7 @@ export function Phase3Rank({
               <Sparkles className="h-5 w-5 text-primary" strokeWidth={1.5} />
             </div>
             <div className="font-display text-xl mb-1">Ready to rank</div>
-            <p className="text-sm text-muted-foreground">Hit &ldquo;Rank prospects with Claude&rdquo; above to score and sort your leads.</p>
+            <p className="text-sm text-muted-foreground">Hit &ldquo;Rank prospects with AI&rdquo; above to score and sort your leads.</p>
           </CardContent>
         </Card>
       )}
